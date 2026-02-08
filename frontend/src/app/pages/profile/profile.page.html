@@ -1,0 +1,41 @@
+<app-header title="個人設定"></app-header>
+
+<ion-content class="ion-padding">
+
+  <!-- 頭像 -->
+  <div class="profile-avatar">
+    <!-- <ion-avatar>
+      <img [src]="avatarUrl || 'assets/avatar-default.png'" />
+    </ion-avatar> -->
+
+    <!-- <ion-button size="small" fill="clear">
+      更換頭像
+    </ion-button> -->
+  </div>
+
+  <ion-list inset>
+
+    <!-- 修改密碼 -->
+    <ion-item button (click)="openChangePassword()">
+      <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+      <ion-label>修改密碼</ion-label>
+    </ion-item>
+
+    <!-- 語言 -->
+    <!-- <ion-item>
+      <ion-icon name="language-outline" slot="start"></ion-icon>
+      <ion-label>語言</ion-label>
+      <ion-select [(ngModel)]="language">
+        <ion-select-option value="zh">中文</ion-select-option>
+        <ion-select-option value="en">English</ion-select-option>
+      </ion-select>
+    </ion-item> -->
+
+  </ion-list>
+
+  <!-- 登出 -->
+  <ion-button expand="block" color="danger" (click)="logout()">
+    登出
+  </ion-button>
+
+</ion-content>

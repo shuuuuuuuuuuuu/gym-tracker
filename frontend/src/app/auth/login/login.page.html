@@ -1,0 +1,98 @@
+<ion-content fullscreen [scrollY]="false">
+
+  <div class="page-container">
+
+    <!-- ===== 上半部：動態 Welcome ===== -->
+    <div class="welcome-section">
+      <h1 class="welcome-title">
+        Welcome to <span>Gym Tracker</span>
+      </h1>
+
+      <p class="typing-line">
+        Aiming for Muscle Master.
+      </p>
+    </div>
+
+    <!-- ===== 下半部：操作區 ===== -->
+    <div class="action-section ion-padding">
+
+      <!-- 初始 -->
+      <ng-container *ngIf="mode === 'init'">
+        <ion-button expand="block" (click)="switchMode('login')">
+          登入
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="ion-margin-top"
+          (click)="switchMode('register')">
+          註冊
+        </ion-button>
+      </ng-container>
+
+      <!-- 登入 -->
+      <form *ngIf="mode === 'login'" [formGroup]="loginForm">
+
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input type="email" formControlName="email"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">密碼</ion-label>
+          <ion-input type="password" formControlName="password"></ion-input>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          class="ion-margin-top"
+          [disabled]="loginForm.invalid"
+          (click)="login()">
+          登入
+        </ion-button>
+
+        <ion-button fill="clear" expand="block" (click)="backToInit()">
+          ← 返回
+        </ion-button>
+      </form>
+
+      <!-- 註冊 -->
+      <form *ngIf="mode === 'register'" [formGroup]="registerForm">
+
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input
+            type="email"
+            placeholder="example@email.com"
+            formControlName="email">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">密碼</ion-label>
+          <ion-input type="password" formControlName="password"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">使用者名稱</ion-label>
+          <ion-input type="text" formControlName="name"></ion-input>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          class="ion-margin-top"
+          [disabled]="registerForm.invalid"
+          (click)="register()">
+          註冊
+        </ion-button>
+
+        <ion-button fill="clear" expand="block" (click)="backToInit()">
+          ← 返回
+        </ion-button>
+      </form>
+
+    </div>
+  </div>
+
+</ion-content>

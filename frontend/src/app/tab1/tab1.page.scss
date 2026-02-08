@@ -1,0 +1,56 @@
+/* 強制文字白色，避免 dark mode 看不到 */
+ion-item ion-label h2,
+ion-item ion-label p {
+  color: #ffffff;
+}
+
+/* 如果想讓錯誤訊息更明顯 */
+ion-text[color="danger"] p {
+  color: #ff6b6b;
+}
+
+/* 可以微調 padding 與 spacing */
+ion-item {
+  --inner-padding-start: 16px;
+  --inner-padding-end: 16px;
+  --background: rgba(255, 255, 255, 0.05);
+}
+
+ion-item h2 {
+  font-weight: bolder;
+}
+
+.required {
+  color: red;
+  margin-left: 2px;
+}
+
+// value & set 警示訊息
+.error-text {
+  color: red;
+  font-size: 0.9rem;
+  margin-left: 16px;
+  margin-top: 2px;
+}
+
+ion-modal ion-label{
+  font-size: 1rem;
+}
+
+.form-label {
+  font-size: 0.6 rem;
+  font-weight: bold;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+ion-button[fill="solid"] {
+  --background: var(--ion-color-primary);
+  --color: #fff;
+}
+

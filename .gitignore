@@ -1,0 +1,18 @@
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Laravel
+backend/vendor/
+backend/.env
+backend/storage/logs/
+backend/storage/framework/
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+

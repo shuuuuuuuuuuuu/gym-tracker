@@ -1,0 +1,75 @@
+.page-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Welcome 區 ===== */
+.welcome-section {
+  height: 60vh; /* 上半畫面 */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+}
+
+.welcome-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  animation: fadeUp 1s ease forwards;
+
+  span {
+    // color: var(--ion-color-primary);
+    color: rgb(249, 249, 6)
+  }
+}
+
+/* ===== 整句打字效果 ===== */
+.typing-line {
+  margin-top: 12px;
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+
+  border-right: 2px solid currentColor;
+  width: 0;
+
+  /* 關鍵：延遲 1.5 秒後才開始 */
+  animation:
+    typing 3.2s steps(24, end) forwards,
+    blink 0.8s step-end infinite;
+
+  animation-delay: 1s;
+}
+
+/* ===== Animations ===== */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 一個字母一個字母 */
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 24ch; // Aiming for Muscle Master 字元數
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}

@@ -1,0 +1,41 @@
+<app-header title="GYM TRACKER">
+  <ion-button fill="clear" (click)="goProfile()">
+    <ion-icon name="person-circle-outline" class="person-circle"></ion-icon>
+  </ion-button>
+</app-header>
+
+<ion-content class="dark-content">
+
+  <!-- 時間區間切換（日 / 週 / 月 / 年） -->
+  <ion-segment [(ngModel)]="timeRange" (ionChange)="recalculate()">
+    <ion-segment-button value="day">日</ion-segment-button>
+    <ion-segment-button value="week">週</ion-segment-button>
+    <ion-segment-button value="month">月</ion-segment-button>
+    <ion-segment-button value="year">年</ion-segment-button>
+  </ion-segment>
+
+  <!-- 日期導覽（前一段 / 目前區間 / 下一段） -->
+  <div class="date-nav">
+    <ion-button fill="clear" (click)="changePeriod('prev')">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </ion-button>
+
+    <div class="date-label">
+      {{ displayRange }}
+    </div>
+
+    <ion-button fill="clear" (click)="changePeriod('next')">
+      <ion-icon name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-wrapper">
+    <canvas baseChart
+            [data]="chartData"
+            [options]="chartOptions"
+            [type]="'line'">
+    </canvas>
+  </div>
+
+</ion-content>
