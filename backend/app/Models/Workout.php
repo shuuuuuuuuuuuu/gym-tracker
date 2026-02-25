@@ -19,6 +19,9 @@ class Workout extends Model
         'value',
         'weight',
         'workout_date',
+        'primary_muscle',    
+        'secondary_muscle',
+        'muscle_group',  
     ];
 
     protected $casts = [

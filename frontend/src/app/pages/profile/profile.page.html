@@ -1,18 +1,14 @@
 <app-header title="個人設定"></app-header>
 
 <ion-content class="ion-padding">
-
-  <!-- 頭像 -->
-  <div class="profile-avatar">
-    <!-- <ion-avatar>
-      <img [src]="avatarUrl || 'assets/avatar-default.png'" />
-    </ion-avatar> -->
-
-    <!-- <ion-button size="small" fill="clear">
-      更換頭像
-    </ion-button> -->
+  <div class="profile-header">
+    <h2 class="title">
+      <span>Hi, {{ userName }}</span>
+      <ion-icon name="barbell-outline"></ion-icon>
+    </h2>
   </div>
-
+  
+  <!-- 修改密碼區塊 -->
   <ion-list inset>
 
     <!-- 修改密碼 -->
@@ -21,21 +17,12 @@
       <ion-label>修改密碼</ion-label>
     </ion-item>
 
-    <!-- 語言 -->
-    <!-- <ion-item>
-      <ion-icon name="language-outline" slot="start"></ion-icon>
-      <ion-label>語言</ion-label>
-      <ion-select [(ngModel)]="language">
-        <ion-select-option value="zh">中文</ion-select-option>
-        <ion-select-option value="en">English</ion-select-option>
-      </ion-select>
-    </ion-item> -->
+  <!-- 登出 -->
+    <ion-item button (click)="logout()">
+      <ion-icon name="exit-outline" slot="start"></ion-icon>
+      <ion-label>登出</ion-label>
+    </ion-item>
 
   </ion-list>
-
-  <!-- 登出 -->
-  <ion-button expand="block" color="danger" (click)="logout()">
-    登出
-  </ion-button>
 
 </ion-content>

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { AppHeaderComponent } from 'src/app/components/app-header/app-header.component';
 import { IonicModule } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/services/auth';
 import { Router } from '@angular/router';
 
@@ -17,16 +16,19 @@ import { Router } from '@angular/router';
   imports: [IonicModule, CommonModule, FormsModule, AppHeaderComponent]
 })
 export class ProfilePage implements OnInit {
-language: string = 'abc'
+  userName = '';
+  
   constructor(
     private alertCtrl: AlertController,
-    private http: HttpClient,
     private authService: AuthService,
     private router: Router
     ) { }
 
   ngOnInit() {
+    const user = this.authService.getUser();
+    this.userName = user?.name ?? '';
   }
+
   async openChangePassword() {
     const alert = await this.alertCtrl.create({
       header: '修改密碼',

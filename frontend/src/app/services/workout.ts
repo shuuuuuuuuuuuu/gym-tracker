@@ -6,11 +6,12 @@ import { environment } from 'src/environments/environment';
 export interface Workout {
   id?: number;
   name: string;
-  weight: null;
+  weight: number | null;
   unit: string;
   value: number;
   sets: number;
   workout_date: string;
+  primary_muscle?: string; 
   created_at?: string;
   updated_at?: string;
 }
@@ -23,10 +24,8 @@ export interface PaginatedResponse<T> {
 }
 
 export interface PeriodStats {
-  period: string;           // YYYY-MM-DD / YYYY-Wxx / YYYY-MM / YYYY
-  totalVolume: number;      // 訓練總量
-  max1RM: number | null;    // 最大1RM
-  workoutCount: number;     // 訓練次數
+  muscle: string;       // 主肌群
+  volume: number;       // 訓練量
 }
 
 @Injectable({
@@ -68,5 +67,11 @@ export class WorkoutService {
 
   deleteWorkout(id: number) {
     return this.http.delete(`${this.baseUrl}/${id}`);
+  }
+
+  // 🔹 取得指定時間範圍的主肌群統計
+  getStatistics(timeRange: 'day' | 'week' | 'month' | 'year', start: string, end: string): Observable<{ data: PeriodStats[] }> {
+    const params = { range: timeRange, start, end };
+    return this.http.get<{ data: PeriodStats[] }>(`${this.baseUrl}/statistics`, { params, withCredentials: true });
   }
 }

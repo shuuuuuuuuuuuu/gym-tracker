@@ -7,7 +7,7 @@
 <ion-content class="dark-content">
 
   <!-- 時間區間切換（日 / 週 / 月 / 年） -->
-  <ion-segment [(ngModel)]="timeRange" (ionChange)="recalculate()">
+  <ion-segment [(ngModel)]="timeRange" (ionChange)="onTimeRangeChange()">
     <ion-segment-button value="day">日</ion-segment-button>
     <ion-segment-button value="week">週</ion-segment-button>
     <ion-segment-button value="month">月</ion-segment-button>
@@ -19,12 +19,15 @@
     <ion-button fill="clear" (click)="changePeriod('prev')">
       <ion-icon name="chevron-back-outline"></ion-icon>
     </ion-button>
-
+  
     <div class="date-label">
       {{ displayRange }}
     </div>
-
-    <ion-button fill="clear" (click)="changePeriod('next')">
+  
+    <ion-button
+      fill="clear"
+      (click)="changePeriod('next')"
+      *ngIf="canGoNext">
       <ion-icon name="chevron-forward-outline"></ion-icon>
     </ion-button>
   </div>
@@ -34,7 +37,7 @@
     <canvas baseChart
             [data]="chartData"
             [options]="chartOptions"
-            [type]="'line'">
+            [type]="'bar'">
     </canvas>
   </div>
 

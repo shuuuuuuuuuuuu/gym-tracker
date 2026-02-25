@@ -1,0 +1,15 @@
+.profile-header {
+    margin-bottom: 20px;
+  
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+    
+    .title {
+        display: flex;
+        align-items: center;   // 垂直置中
+        justify-content: flex-start; // 靠左對齊
+        gap: 8px;              // 文字和 icon 間距
+      }
+  }

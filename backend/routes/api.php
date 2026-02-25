@@ -11,7 +11,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/workouts/all', [WorkoutController::class, 'allWorkouts']);
-
+    Route::get('/statistics', [WorkoutController::class, 'statistics']);
+    
     Route::apiResource('workouts', WorkoutController::class);
     
     Route::post('/change-password', [AuthController::class, 'changePassword']);

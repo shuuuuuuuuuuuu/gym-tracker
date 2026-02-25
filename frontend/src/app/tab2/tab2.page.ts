@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { WorkoutService, Workout, PeriodStats } from '../services/workout';
 import { AppHeaderComponent } from '../components/app-header/app-header.component';
 import { Router } from '@angular/router';
-
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { BaseChartDirective, NgChartsModule } from 'ng2-charts';
 
@@ -17,231 +16,212 @@ import { BaseChartDirective, NgChartsModule } from 'ng2-charts';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, AppHeaderComponent, NgChartsModule]
 })
-export class Tab2Page implements OnInit, AfterViewInit  {
+export class Tab2Page implements OnInit, AfterViewInit {
 
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   workouts: Workout[] = [];
   stats: any[] = [];
   timeRange: 'day' | 'week' | 'month' | 'year' = 'day';
- 
-  // 使用者目前看的時間
-  currentDate: Date = new Date(); 
+  currentDate: Date = new Date();
 
-  // Chart.js 屬性
- chartData: ChartConfiguration<'line'>['data'] = {
-  labels: [],
-  datasets: [
-    {
-      label: '訓練量 (Volume)',
-      data: [],
-      borderColor: 'rgba(75, 192, 192, 1)',
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-      tension: 0.4
+  chartData: ChartConfiguration<'bar'>['data'] = {
+    labels: [],
+    datasets: [
+      {
+        label: '訓練量 (Volume)',
+        data: [],
+        backgroundColor: 'rgba(240, 230, 130, 0.9)',
+      }
+    ]
+  };
+
+  chartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: '#fff' } },
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          label: (ctx) => {
+            const value = ctx.raw as number;
+            return `訓練量：${value.toLocaleString()} kg`;
+          }
+        }
+      }
     },
-    {
-      label: '最大 1RM',
-      data: [],
-      borderColor: 'rgba(255, 99, 132, 1)',
-      backgroundColor: 'rgba(255, 99, 132, 0.2)',
-      tension: 0.4
+    scales: {
+      x: { ticks: { color: '#fff', maxRotation: 45, minRotation: 45 }, grid: { display: false } },
+      y: { ticks: { color: '#fff' }, beginAtZero: true }
     }
-  ]
-};
+  };
 
-chartOptions: ChartOptions<'line'> = {
-  responsive: true,
-  plugins: {
-    legend: { labels: { color: '#fff' } },
-    tooltip: { enabled: true }
-  },
-  scales: {
-    x: { ticks: { color: '#fff' } },
-    y: { ticks: { color: '#fff' } }
+  totalVolume = 0;
+  avgIntensity = 0;
+  maxIntensityPercent = 0;
+
+  constructor(private workoutService: WorkoutService, private router: Router) {}
+
+  ngOnInit() { 
+    this.currentDate = this.normalizeDate(new Date());
+    this.loadStatsData();
   }
-};
+  ngAfterViewInit() {}
 
-  constructor(
-    private workoutService: WorkoutService,
-    private router: Router) {}
+  goProfile() { this.router.navigateByUrl('/profile'); }
 
-    ngOnInit() {
-      this.loadStatsData();
-    }
-  
-    ngAfterViewInit() {
-      // Chart 初始化完成後
-    }
-  
-    loadStatsData() {
-      this.workoutService.getAllWorkouts().subscribe({
-        next: (res) => {
-          this.workouts = res.data;
-            console.log(this.workouts);
-            
-          this.recalculate();
-        },
-        error: () => {
-          console.error('無法取得統計資料');
-        }
-      });
-    }
-
-    calculateVolume(w: Workout): number {
-      if (w.unit === 'reps' && w.weight !== null) return w.weight * w.value * w.sets;
-      if (w.unit === 'secs') return w.value * w.sets;
-      return 0;
-    }
-
-    estimate1RM(w: Workout): number | null {
-      if (w.unit !== 'reps' || !w.weight || w.value <= 1) return w.weight ?? null;
-      return +(w.weight * (1 + w.value / 30)).toFixed(1);
-    }
-
-    formatDate(d: Date): string {
-      return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
-    }
-
-    getWeekRange(base: Date) {
-      const end = new Date(base);
-      const start = new Date(base);
-      start.setDate(end.getDate() - 6);
-      return { start, end };
-    }
-
-    getMonthRange(base: Date) {
-      const start = new Date(base.getFullYear(), base.getMonth(), 1);
-      const end = new Date(base.getFullYear(), base.getMonth() + 1, 0);
-      return { start, end };
-    }
-
-    getYearRange(base: Date) {
-      const start = new Date(base.getFullYear(), 0, 1);
-      const end = new Date(base.getFullYear(), 11, 31);
-      return { start, end };
-    }
-
-    filterWorkoutsByRange(): Workout[] {
-      let start!: Date;
-      let end!: Date;
-    
-      switch (this.timeRange) {
-        case 'day':
-          start = new Date(this.currentDate);
-          end = new Date(this.currentDate);
-          break;
-    
-        case 'week':
-          ({ start, end } = this.getWeekRange(this.currentDate));
-          break;
-    
-        case 'month':
-          ({ start, end } = this.getMonthRange(this.currentDate));
-          break;
-    
-        case 'year':
-          ({ start, end } = this.getYearRange(this.currentDate));
-          break;
-      }
-    
-      return this.workouts.filter(w => {
-        const d = new Date(w.workout_date);
-        return d >= start && d <= end;
-      });
-    }
-
-    recalculate() {
-      const grouped: Record<string, PeriodStats> = {};
-      const source = this.filterWorkoutsByRange();
-    
-      source.forEach(w => {
-        const key = this.getDisplayKey(w.workout_date);
-    
-        if (!grouped[key]) {
-          grouped[key] = {
-            period: key,
-            totalVolume: 0,
-            max1RM: null,
-            workoutCount: 0
-          };
-        }
-    
-        grouped[key].totalVolume += this.calculateVolume(w);
-    
-        const rm = this.estimate1RM(w);
-        if (rm !== null) {
-          grouped[key].max1RM = Math.max(grouped[key].max1RM ?? 0, rm);
-        }
-    
-        grouped[key].workoutCount += 1;
-      });
-    
-      this.stats = Object.values(grouped);
-      this.updateChart();
-    }
-    
-    getDisplayKey(dateStr: string): string {
-      const d = new Date(dateStr);
-    
-      switch (this.timeRange) {
-        case 'day':
-          return this.formatDate(d);
-    
-        case 'week': {
-          const { start, end } = this.getWeekRange(d);
-          return `${this.formatDate(start)} ~ ${this.formatDate(end)}`;
-        }
-    
-        case 'month':
-          return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`;
-    
-        case 'year':
-          return `${d.getFullYear()}`;
-      }
-    }
-
-    changePeriod(direction: 'prev' | 'next') {
-      const d = new Date(this.currentDate);
-    
-      switch (this.timeRange) {
-        case 'day': d.setDate(d.getDate() + (direction === 'next' ? 1 : -1)); break;
-        case 'week': d.setDate(d.getDate() + (direction === 'next' ? 7 : -7)); break;
-        case 'month': d.setMonth(d.getMonth() + (direction === 'next' ? 1 : -1)); break;
-        case 'year': d.setFullYear(d.getFullYear() + (direction === 'next' ? 1 : -1)); break;
-      }
-    
-      this.currentDate = d;
-      this.recalculate();
-    }    
-    get displayRange(): string {
-      switch (this.timeRange) {
-        case 'day':
-          return this.formatDate(this.currentDate);
-    
-        case 'week': {
-          const { start, end } = this.getWeekRange(this.currentDate);
-          return `${this.formatDate(start)} ~ ${this.formatDate(end)}`;
-        }
-    
-        case 'month':
-          return `${this.currentDate.getFullYear()}/${String(this.currentDate.getMonth() + 1).padStart(2, '0')}`;
-    
-        case 'year':
-          return `${this.currentDate.getFullYear()}`;
-      }
-    }
-    
-    updateChart() {
-      this.chartData.labels = this.stats.map(s => s.period);
-      this.chartData.datasets[0].data = this.stats.map(s => s.totalVolume);
-      this.chartData.datasets[1].data = this.stats.map(s => s.max1RM ?? 0);
-  
-      this.chart?.update();
-    }
-  
-
-  goProfile() {
-    this.router.navigateByUrl('/profile');
+  // 🔹 取得統計資料
+  loadStatsData() {
+    this.workoutService.getAllWorkouts().subscribe({
+      next: (res) => {
+        this.workouts = res.data;
+        this.recalculate();
+      },
+      error: () => console.error('無法取得統計資料')
+    });
   }
   
+  onTimeRangeChange() {
+    // 每次切換區間都重設為今天
+    this.currentDate = this.normalizeDate(new Date());
+    this.recalculate();
+  }
+
+  calculateVolume(w: Workout): number {
+    if (w.unit === 'reps' && w.weight !== null) return w.weight * w.value * w.sets;
+    if (w.unit === 'secs') return w.value * w.sets;
+    return 0;
+  }
+
+  estimate1RM(w: Workout): number | null {
+    if (w.unit !== 'reps' || !w.weight || w.value <= 1) return w.weight ?? null;
+    return +(w.weight * (1 + w.value / 30)).toFixed(1);
+  }
+
+  toDateKey(date: string | Date): string {
+    const d = typeof date === 'string' ? new Date(date) : date;
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  private normalizeDate(date: Date): Date {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  filterWorkoutsByRange(): Workout[] {
+    const current = this.normalizeDate(this.currentDate);
+  
+    return this.workouts.filter(w => {
+      const workoutDate = this.normalizeDate(new Date(w.workout_date));
+  
+      switch (this.timeRange) {
+  
+        case 'day':
+          return workoutDate.getTime() === current.getTime();
+  
+        case 'week': {
+          const start = this.normalizeDate(new Date(current));
+          start.setDate(start.getDate() - 6);
+          return workoutDate >= start && workoutDate <= current;
+        }
+  
+        case 'month':
+          return (
+            workoutDate.getFullYear() === current.getFullYear() &&
+            workoutDate.getMonth() === current.getMonth()
+          );
+  
+        case 'year':
+          return workoutDate.getFullYear() === current.getFullYear();
+      }
+    });
+  }
+
+  recalculate() {
+    const source = this.filterWorkoutsByRange();
+
+    const byMuscle: Record<string, number> = {};
+
+    source.forEach(w => {
+      const muscle = (w as any).primary_muscle ?? '未分類';
+      byMuscle[muscle] = (byMuscle[muscle] || 0) + this.calculateVolume(w);
+    });
+
+    this.totalVolume = Object.values(byMuscle).reduce((a,b) => a+b, 0);
+
+    this.chartData.labels = Object.keys(byMuscle);
+    this.chartData.datasets[0].data = Object.values(byMuscle);
+
+    this.chart?.update();
+  }
+
+  // 🔹 日期導覽
+  get canGoNext(): boolean {
+  const today = this.normalizeDate(new Date());
+  const next = this.normalizeDate(new Date(this.currentDate));
+
+  switch (this.timeRange) {
+    case 'day':
+      next.setDate(next.getDate() + 1);
+      break;
+    case 'week':
+      next.setDate(next.getDate() + 7);
+      break;
+    case 'month':
+      next.setMonth(next.getMonth() + 1);
+      break;
+    case 'year':
+      next.setFullYear(next.getFullYear() + 1);
+      break;
+  }
+
+  return next.getTime() <= today.getTime();
+}
+
+changePeriod(direction: 'prev' | 'next') {
+  const today = this.normalizeDate(new Date());
+  const newDate = this.normalizeDate(new Date(this.currentDate));
+
+  switch (this.timeRange) {
+    case 'day':
+      newDate.setDate(newDate.getDate() + (direction === 'next' ? 1 : -1));
+      break;
+
+    case 'week':
+      newDate.setDate(newDate.getDate() + (direction === 'next' ? 7 : -7));
+      break;
+
+    case 'month':
+      newDate.setMonth(newDate.getMonth() + (direction === 'next' ? 1 : -1));
+      break;
+
+    case 'year':
+      newDate.setFullYear(newDate.getFullYear() + (direction === 'next' ? 1 : -1));
+      break;
+  }
+
+  const normalizedNewDate = this.normalizeDate(newDate);
+
+  // 超過今天就阻止
+  if (normalizedNewDate.getTime() > today.getTime()) {
+    return;
+  }
+
+  this.currentDate = normalizedNewDate;
+  this.recalculate();
+}
+
+  get displayRange(): string {
+    const d = this.currentDate;
+    switch (this.timeRange) {
+      case 'day': return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+      case 'week': const start = new Date(d); start.setDate(d.getDate()-6); return `${start.getFullYear()}/${String(start.getMonth()+1).padStart(2,'0')}/${String(start.getDate()).padStart(2,'0')} ~ ${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+      case 'month': return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}`;
+      case 'year': return `${d.getFullYear()}`;
+    }
+  }
 }
