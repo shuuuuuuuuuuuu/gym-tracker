@@ -2,35 +2,134 @@
 
 namespace App\Services;
 
-use OpenAI;
-
 class WorkoutClassifierService
 {
     /**
      * 規則優先比對
      */
     protected array $rules = [
-        'squat' => [
+
+        // ===== 下半身 =====
+        'lunge' => [
             'primary' => 'legs',
             'secondary' => 'glutes',
             'group' => 'lower',
         ],
-        '深蹲' => [
+        '弓箭步' => [
             'primary' => 'legs',
             'secondary' => 'glutes',
             'group' => 'lower',
         ],
-        'bench press' => [
+        'leg press' => [
+            'primary' => 'legs',
+            'secondary' => 'glutes',
+            'group' => 'lower',
+        ],
+        '腿推' => [
+            'primary' => 'legs',
+            'secondary' => 'glutes',
+            'group' => 'lower',
+        ],
+        'leg curl' => [
+            'primary' => 'hamstrings',
+            'secondary' => 'glutes',
+            'group' => 'lower',
+        ],
+        '腿後勾' => [
+            'primary' => 'hamstrings',
+            'secondary' => 'glutes',
+            'group' => 'lower',
+        ],
+        'leg extension' => [
+            'primary' => 'legs',
+            'secondary' => null,
+            'group' => 'lower',
+        ],
+        '腿屈伸' => [
+            'primary' => 'legs',
+            'secondary' => null,
+            'group' => 'lower',
+        ],
+        'hip thrust' => [
+            'primary' => 'glutes',
+            'secondary' => 'hamstrings',
+            'group' => 'lower',
+        ],
+        '臀推' => [
+            'primary' => 'glutes',
+            'secondary' => 'hamstrings',
+            'group' => 'lower',
+        ],
+        'calf raise' => [
+            'primary' => 'calves',
+            'secondary' => null,
+            'group' => 'lower',
+        ],
+        '提踵' => [
+            'primary' => 'calves',
+            'secondary' => null,
+            'group' => 'lower',
+        ],
+    
+        // ===== 胸 =====
+        'incline bench press' => [
             'primary' => 'chest',
             'secondary' => 'triceps',
             'group' => 'upper',
         ],
-        '臥推' => [
+        '上斜臥推' => [
             'primary' => 'chest',
             'secondary' => 'triceps',
             'group' => 'upper',
         ],
-        'lat pulldown' => [
+        'chest fly' => [
+            'primary' => 'chest',
+            'secondary' => null,
+            'group' => 'upper',
+        ],
+        '夾胸' => [
+            'primary' => 'chest',
+            'secondary' => null,
+            'group' => 'upper',
+        ],
+        'push up' => [
+            'primary' => 'chest',
+            'secondary' => 'triceps',
+            'group' => 'upper',
+        ],
+        '伏地挺身' => [
+            'primary' => 'chest',
+            'secondary' => 'triceps',
+            'group' => 'upper',
+        ],
+    
+        // ===== 背 =====
+        'barbell row' => [
+            'primary' => 'back',
+            'secondary' => 'biceps',
+            'group' => 'upper',
+        ],
+        '划船' => [
+            'primary' => 'back',
+            'secondary' => 'biceps',
+            'group' => 'upper',
+        ],
+        'seated row' => [
+            'primary' => 'back',
+            'secondary' => 'biceps',
+            'group' => 'upper',
+        ],
+        'face pull' => [
+            'primary' => 'rear_delts',
+            'secondary' => 'back',
+            'group' => 'upper',
+        ],
+        '反向飛鳥' => [
+            'primary' => 'rear_delts',
+            'secondary' => 'back',
+            'group' => 'upper',
+        ],
+        'pull up' => [
             'primary' => 'back',
             'secondary' => 'biceps',
             'group' => 'upper',
@@ -40,30 +139,127 @@ class WorkoutClassifierService
             'secondary' => 'biceps',
             'group' => 'upper',
         ],
-        'deadlift' => [
-            'primary' => 'hamstrings',
-            'secondary' => 'glutes',
-            'group' => 'lower',
+    
+        // ===== 肩 =====
+        'shoulder press' => [
+            'primary' => 'shoulders',
+            'secondary' => 'triceps',
+            'group' => 'upper',
         ],
-        '硬舉' => [
-            'primary' => 'hamstrings',
-            'secondary' => 'glutes',
-            'group' => 'lower',
+        '肩推' => [
+            'primary' => 'shoulders',
+            'secondary' => 'triceps',
+            'group' => 'upper',
+        ],
+        'lateral raise' => [
+            'primary' => 'shoulders',
+            'secondary' => null,
+            'group' => 'upper',
+        ],
+        '側平舉' => [
+            'primary' => 'shoulders',
+            'secondary' => null,
+            'group' => 'upper',
+        ],
+        'front raise' => [
+            'primary' => 'shoulders',
+            'secondary' => null,
+            'group' => 'upper',
+        ],
+        '前平舉' => [
+            'primary' => 'shoulders',
+            'secondary' => null,
+            'group' => 'upper',
+        ],
+    
+        // ===== 手臂 =====
+        'bicep curl' => [
+            'primary' => 'biceps',
+            'secondary' => null,
+            'group' => 'upper',
+        ],
+        '二頭彎舉' => [
+            'primary' => 'biceps',
+            'secondary' => null,
+            'group' => 'upper',
+        ],
+        'tricep pushdown' => [
+            'primary' => 'triceps',
+            'secondary' => null,
+            'group' => 'upper',
+        ],
+        '三頭下壓' => [
+            'primary' => 'triceps',
+            'secondary' => null,
+            'group' => 'upper',
+        ],
+    
+        // ===== 核心 =====
+        'plank' => [
+            'primary' => 'core',
+            'secondary' => null,
+            'group' => 'core',
+        ],
+        '棒式' => [
+            'primary' => 'core',
+            'secondary' => null,
+            'group' => 'core',
+        ],
+        'crunch' => [
+            'primary' => 'abs',
+            'secondary' => null,
+            'group' => 'core',
+        ],
+        '捲腹' => [
+            'primary' => 'abs',
+            'secondary' => null,
+            'group' => 'core',
         ],
     ];
 
     /**
-     * 取得 OpenAI client
+     * 關鍵字 → 肌群 對應（加權判斷用）
      */
-    protected function client()
-{
-    return OpenAI::client(env('OPENAI_API_KEY'));
-}
+    protected array $keywordMap = [
+        'press'     => ['primary' => 'chest', 'group' => 'upper'],
+        'push'      => ['primary' => 'chest', 'group' => 'upper'],
+        'row'       => ['primary' => 'back', 'group' => 'upper'],
+        'pull'      => ['primary' => 'back', 'group' => 'upper'],
+        'curl'      => ['primary' => 'biceps', 'group' => 'upper'],
+        'extension' => ['primary' => 'triceps', 'group' => 'upper'],
+        'squat'     => ['primary' => 'legs', 'group' => 'lower'],
+        'deadlift'  => ['primary' => 'hamstrings', 'group' => 'lower'],
+        'lunge'     => ['primary' => 'legs', 'group' => 'lower'],
+        'raise'     => ['primary' => 'shoulders', 'group' => 'upper'],
+        'fly'       => ['primary' => 'chest', 'group' => 'upper'],
+        'plank'     => ['primary' => 'core', 'group' => 'core'],
+        'crunch'    => ['primary' => 'abs', 'group' => 'core'],
+    ];
+
+    protected array $cache = [];
 
     /**
-     * 規則比對
+     * 封裝總流程
      */
-    public function classify(string $name): ?array
+    public function resolve(string $name): array
+    {
+        if (isset($this->cache[$name])) {
+            return $this->cache[$name];
+        }
+
+        $result =
+            $this->classifyByRule($name)
+            ?? $this->classifyByKeywordScore($name)
+            ?? $this->classifyBySimilarity($name)
+            ?? $this->unknown();
+
+        return $this->cache[$name] = $result;
+    }
+
+    /**
+     * 1️⃣ 精準規則匹配
+     */
+    protected function classifyByRule(string $name): ?array
     {
         $normalized = strtolower($name);
 
@@ -77,66 +273,78 @@ class WorkoutClassifierService
     }
 
     /**
-     * 用 OpenAI 判斷肌群
+     * 2️⃣ 關鍵字加權判斷
      */
-    public function classifyWithAI(string $name): array
+    protected function classifyByKeywordScore(string $name): ?array
     {
-        $client = $this->client();
+        $normalized = strtolower($name);
+        $scores = [];
 
-        $prompt = <<<EOD
-請幫我判斷健身動作的主要肌群。
-輸入動作名稱: "{$name}"。
-請回傳 JSON，格式如下：
-{
-  "primary": "主要肌群",
-  "secondary": "次要肌群",
-  "group": "upper/lower/full"
-}
-如果不確定，請盡量填 best guess。
-EOD;
-
-        $response = $client->chat()->create([
-            'model' => 'gpt-3.5-turbo',
-            'messages' => [
-                [
-                    'role' => 'user',
-                    'content' => $prompt
-                ]
-            ],
-            'temperature' => 0,
-            'max_tokens' => 100,
-        ]);
-
-        $content = $response->choices[0]->message->content ?? '';
-
-        $json = json_decode($content, true);
-
-        if (!$json || !isset($json['primary'])) {
-            return [
-                'primary' => 'unknown',
-                'secondary' => 'unknown',
-                'group' => 'unknown',
-            ];
+        foreach ($this->keywordMap as $keyword => $info) {
+            if (str_contains($normalized, $keyword)) {
+                $primary = $info['primary'];
+                $scores[$primary] = ($scores[$primary] ?? 0) + 1;
+            }
         }
 
-        return $json;
+        if (empty($scores)) {
+            return null;
+        }
+
+        arsort($scores);
+        $best = array_key_first($scores);
+
+        return [
+            'primary'   => $best,
+            'secondary' => null,
+            'group'     => $this->inferGroup($best),
+        ];
     }
 
-    protected array $cache = [];
-    
     /**
-     * 封裝流程：先 rule-based，再 OpenAI
+     * 3️⃣ 字串相似度比對（模糊最終判斷）
      */
-    public function resolve(string $name): array
+    protected function classifyBySimilarity(string $name): ?array
     {
-        if (isset($this->cache[$name])) {
-            return $this->cache[$name];
+        $normalized = strtolower($name);
+        $bestScore = 0;
+        $bestMatch = null;
+
+        foreach ($this->rules as $keyword => $result) {
+            similar_text($normalized, strtolower($keyword), $percent);
+
+            if ($percent > $bestScore) {
+                $bestScore = $percent;
+                $bestMatch = $result;
+            }
         }
-    
-        $result = $this->classify($name) ?? $this->classifyWithAI($name);
 
-        $this->cache[$name] = $result;
+        // 相似度超過 70% 才接受
+        if ($bestScore >= 70) {
+            return $bestMatch;
+        }
 
-        return $result;    
+        return null;
+    }
+
+    /**
+     * 根據 primary 推測 group
+     */
+    protected function inferGroup(string $primary): string
+    {
+        return match ($primary) {
+            'legs', 'glutes', 'hamstrings', 'calves' => 'lower',
+            'core', 'abs' => 'core',
+            default => 'upper',
+        };
+    }
+
+    protected function unknown(): array
+    {
+        return [
+            'primary'   => 'unknown',
+            'secondary' => null,
+            'group'     => 'unknown',
+        ];
     }
 }

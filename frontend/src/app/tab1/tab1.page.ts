@@ -157,15 +157,15 @@ export class Tab1Page implements OnInit {
     this.workoutService.deleteWorkout(id).subscribe({
       next: () => {
         this.presentToast('已刪除');
-
-        // 刪到該頁最後一筆
-        const targetPage = this.currentPage > this.totalPages? this.totalPages: this.currentPage;
-        this.fetchWorkouts(targetPage);
+  
+        // 直接重新抓目前頁
+        this.fetchWorkouts(this.currentPage);
       },
       error: () => {
         this.presentToast('刪除失敗');
-      },
+      }
     });
+  
   }
 
 

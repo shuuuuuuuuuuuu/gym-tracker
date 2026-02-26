@@ -7,7 +7,6 @@ import { APP_ID } from "@angular/core";
 export const environment = {
   production: false,
   apiUrl: 'http://127.0.0.1:8000/api',
-  mobile_apiUrl: 'http://10.229.1.142:8000/api',
 };
 
 /*

@@ -62,10 +62,13 @@ export class Tab2Page implements OnInit, AfterViewInit {
 
   constructor(private workoutService: WorkoutService, private router: Router) {}
 
-  ngOnInit() { 
+  ionViewWillEnter() { 
     this.currentDate = this.normalizeDate(new Date());
     this.loadStatsData();
   }
+
+  ngOnInit() {}
+
   ngAfterViewInit() {}
 
   goProfile() { this.router.navigateByUrl('/profile'); }

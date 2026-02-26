@@ -241,7 +241,7 @@
           fill="clear"
           [disabled]="currentPage === 1"
           (click)="goPage(1)">
-          ⏮️
+          <ion-icon slot="icon-only" name="play-skip-back" class="white-icon"></ion-icon>
         </ion-button>
   
         <!-- 上一頁 -->
@@ -249,7 +249,7 @@
           fill="clear"
           [disabled]="currentPage === 1"
           (click)="goPage(currentPage - 1)">
-          ◀️
+          <ion-icon slot="icon-only" name="chevron-back" class="white-icon"></ion-icon>
         </ion-button>
   
         <!-- 頁碼 -->
@@ -265,7 +265,7 @@
           fill="clear"
           [disabled]="currentPage === totalPages"
           (click)="goPage(currentPage + 1)">
-          ▶️
+          <ion-icon slot="icon-only" name="chevron-forward" class="white-icon"></ion-icon>
         </ion-button>
   
         <!-- 最後一頁 -->
@@ -273,7 +273,7 @@
           fill="clear"
           [disabled]="currentPage === totalPages"
           (click)="goPage(totalPages)">
-          ⏭️
+          <ion-icon slot="icon-only" name="play-skip-forward" class="white-icon"></ion-icon>
         </ion-button>
   
       </ion-buttons>

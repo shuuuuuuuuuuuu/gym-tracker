@@ -10,7 +10,11 @@ import {
   personCircleOutline,
   lockClosedOutline,
   exitOutline,
-  barbellOutline
+  barbellOutline,
+  playSkipBack,
+  playSkipForward,
+  chevronBack,
+  chevronForward,
  } from 'ionicons/icons';
 
 bootstrapApplication(AppComponent, appConfig)
@@ -24,5 +28,9 @@ bootstrapApplication(AppComponent, appConfig)
     personCircleOutline,
     lockClosedOutline,
     exitOutline,
-    barbellOutline
+    barbellOutline,
+    playSkipBack,
+    playSkipForward,
+    chevronBack,
+    chevronForward,
   });

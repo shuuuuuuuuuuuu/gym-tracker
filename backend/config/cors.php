@@ -8,6 +8,7 @@ return [
     'allowed_origins' => [
         'http://localhost:8100',
         'http://127.0.0.1:8100',
+        'http://192.168.68.59:8100',
     ],
 
     'allowed_headers' => ['*'],
