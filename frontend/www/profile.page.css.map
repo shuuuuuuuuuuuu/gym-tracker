@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/profile/profile.page.scss"],
+  "sourcesContent": [".profile-header {\n    margin-bottom: 20px;\n  \n    h2 {\n      font-size: 22px;\n      font-weight: 600;\n    }\n    \n    .title {\n        display: flex;\n        align-items: center;   // 垂直置中\n        justify-content: flex-start; // 靠左對齊\n        gap: 8px;              // 文字和 icon 間距\n      }\n  }"],
+  "mappings": ";AAAA,CAAA;AACI,iBAAA;;AAEA,CAHJ,eAGI;AACE,aAAA;AACA,eAAA;;AAGF,CARJ,eAQI,CAAA;AACI,WAAA;AACA,eAAA;AACA,mBAAA;AACA,OAAA;;",
+  "names": []
+}

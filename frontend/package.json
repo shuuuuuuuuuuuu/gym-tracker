@@ -1,6 +1,9 @@
 {
   "name": "gym-tracker-app",
   "version": "0.0.1",
+  "engines": {
+    "node": "24.x"
+  },
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {

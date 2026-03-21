@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/tab1/tab1.page.scss"],
+  "sourcesContent": ["/* 強制文字白色，避免 dark mode 看不到 */\nion-item ion-label h2,\nion-item ion-label p {\n  color: #ffffff;\n}\n\n/* 如果想讓錯誤訊息更明顯 */\nion-text[color=\"danger\"] p {\n  color: #ff6b6b;\n}\n\n/* 可以微調 padding 與 spacing */\nion-item {\n  --inner-padding-start: 16px;\n  --inner-padding-end: 16px;\n  --background: rgba(255, 255, 255, 0.05);\n}\n\nion-item h2 {\n  font-weight: bolder;\n}\n\n.required {\n  color: red;\n  margin-left: 2px;\n}\n\n// value & set 警示訊息\n.error-text {\n  color: red;\n  font-size: 0.9rem;\n  margin-left: 16px;\n  margin-top: 2px;\n}\n\nion-modal ion-label{\n  font-size: 1rem;\n}\n\n.form-label {\n  font-size: 0.6 rem;\n  font-weight: bold;\n}\n\n.pagination {\n  display: flex;\n  justify-content: center;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\nion-button[fill=\"solid\"] {\n  --background: var(--ion-color-primary);\n  --color: #fff;\n}\n\n.white-icon {\n  color: #fff;\n}\n"],
+  "mappings": ";;;AACA,SAAA,UAAA;AAAA,SAAA,UAAA;AAEE,SAAA;;AAIF,QAAA,CAAA,cAAA;AACE,SAAA;;AAIF;AACE,yBAAA;AACA,uBAAA;AACA,gBAAA,KAAA,GAAA,EAAA,GAAA,EAAA,GAAA,EAAA;;AAGF,SAAA;AACE,eAAA;;AAGF,CAAA;AACE,SAAA;AACA,eAAA;;AAIF,CAAA;AACE,SAAA;AACA,aAAA;AACA,eAAA;AACA,cAAA;;AAGF,UAAA;AACE,aAAA;;AAGF,CAAA;AACE,aAAA,IAAA;AACA,eAAA;;AAGF,CAAA;AACE,WAAA;AACA,mBAAA;AACA,aAAA;AACA,OAAA;;AAGF,UAAA,CAAA;AACE,gBAAA,IAAA;AACA,WAAA;;AAGF,CAAA;AACE,SAAA;;",
+  "names": []
+}
