@@ -18,17 +18,22 @@ WORKDIR /app
 
 COPY . .
 
+# ✅ 先建 env
 RUN cp .env.example .env || true
 
-RUN composer install -vvv \
+# ✅ 先裝套件
+RUN composer install \
     --ignore-platform-reqs \
     --no-interaction \
     --prefer-dist \
     --optimize-autoloader \
     --no-scripts
 
-RUN php artisan key:generate
-
+# ✅ 先給權限（超關鍵🔥）
 RUN chmod -R 777 storage bootstrap/cache
 
-CMD php -S 0.0.0.0:10000 -t public
+# ❗❗ 不要在 build 階段跑 artisan ❗❗
+# RUN php artisan key:generate  ❌ 拿掉
+
+# ✅ 改成 runtime 再執行
+CMD php artisan key:generate && php -S 0.0.0.0:10000 -t public
