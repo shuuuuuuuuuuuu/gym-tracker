@@ -18,10 +18,6 @@ WORKDIR /app
 
 COPY . .
 
-# ✅ 先建 env
-RUN cp .env.example .env || true
-
-# ✅ 先裝套件
 RUN composer install \
     --ignore-platform-reqs \
     --no-interaction \
@@ -29,11 +25,13 @@ RUN composer install \
     --optimize-autoloader \
     --no-scripts
 
-# ✅ 先給權限（超關鍵🔥）
 RUN chmod -R 777 storage bootstrap/cache
 
-# ❗❗ 不要在 build 階段跑 artisan ❗❗
-# RUN php artisan key:generate  ❌ 拿掉
+# ✅ 強制建立 .env（關鍵🔥）
+RUN touch .env \
+    && echo "APP_ENV=production" >> .env \
+    && echo "APP_DEBUG=true" >> .env \
+    && echo "APP_KEY=" >> .env
 
-# ✅ 改成 runtime 再執行
-CMD php artisan key:generate && php -S 0.0.0.0:10000 -t public
+# ✅ runtime 生成 key
+CMD php artisan key:generate --force && php -S 0.0.0.0:10000 -t public
