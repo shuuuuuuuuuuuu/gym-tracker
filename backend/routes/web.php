@@ -6,6 +6,14 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
+// Route::get('/', function () {
+//     return 'Laravel OK';
+// });
+
 Route::get('/', function () {
-    return 'Laravel OK';
+    return response()->json([
+        'status' => 'ok',
+        'env' => env('APP_ENV'),
+        'db' => env('DB_CONNECTION')
+    ]);
 });
