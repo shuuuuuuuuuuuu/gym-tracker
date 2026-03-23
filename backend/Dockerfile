@@ -3,7 +3,8 @@ FROM php:8.2-cli
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN apt-get update && apt-get install -y \
-    unzip curl git libzip-dev zip libpng-dev libonig-dev
+    unzip curl git libzip-dev zip libpng-dev libonig-dev \
+    libpq-dev
 
 RUN docker-php-ext-install \
     pdo \
