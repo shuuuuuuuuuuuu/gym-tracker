@@ -33,8 +33,4 @@ RUN chmod -R 777 storage bootstrap/cache
 
 EXPOSE 10000
 
-CMD php artisan config:clear && \
-    php artisan cache:clear && \
-    php artisan config:cache && \
-    php artisan key:generate --force && \
-    php -S 0.0.0.0:$PORT -t public
+CMD php artisan key:generate --force && php -S 0.0.0.0:$PORT -t public
