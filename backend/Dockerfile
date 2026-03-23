@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
+    pdo_pgsql \
     zip \
     bcmath \
     mbstring
@@ -27,11 +28,6 @@ RUN composer install \
 
 RUN chmod -R 777 storage bootstrap/cache
 
-# ✅ 強制建立 .env（關鍵🔥）
-RUN touch .env \
-    && echo "APP_ENV=production" >> .env \
-    && echo "APP_DEBUG=true" >> .env \
-    && echo "APP_KEY=" >> .env
+EXPOSE 10000
 
-# ✅ runtime 生成 key
-CMD php artisan key:generate --force && php -S 0.0.0.0:10000 -t public
+CMD php artisan key:generate --force && php -S 0.0.0.0:$PORT -t public
