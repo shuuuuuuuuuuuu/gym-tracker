@@ -20,6 +20,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN touch .env
+
 RUN composer install \
     --ignore-platform-reqs \
     --no-interaction \
