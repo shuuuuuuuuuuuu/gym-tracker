@@ -20,8 +20,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN touch .env
-
 RUN composer install \
     --ignore-platform-reqs \
     --no-interaction \
@@ -33,4 +31,4 @@ RUN chmod -R 777 storage bootstrap/cache
 
 EXPOSE 10000
 
-CMD php artisan key:generate --force && php -S 0.0.0.0:$PORT -t public
+CMD php artisan key:generate --force && php artisan config:clear && php artisan serve --host=0.0.0.0 --port=$PORT
