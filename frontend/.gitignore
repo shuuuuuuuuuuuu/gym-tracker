@@ -1,1 +1,5 @@
-.vercel
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/www/          <-- 新增這一行
+frontend/.angular/
