@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/tab2/tab2.page.scss"],
-  "sourcesContent": [".dark-content {\n    --background: var(--ion-background-color);\n    color: var(--ion-text-color);\n  }\n  .date-nav {\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n    padding: 8px 16px;\n    color: #fff;\n  }\n  \n  .date-label {\n    font-size: 16px;\n    font-weight: 600;\n    text-align: center;\n  }\n  \n  .chart-wrapper {\n    padding: 16px;\n  }\n  "],
-  "mappings": ";AAAA,CAAA;AACI,gBAAA,IAAA;AACA,SAAA,IAAA;;AAEF,CAAA;AACE,WAAA;AACA,eAAA;AACA,mBAAA;AACA,WAAA,IAAA;AACA,SAAA;;AAGF,CAAA;AACE,aAAA;AACA,eAAA;AACA,cAAA;;AAGF,CAAA;AACE,WAAA;;",
-  "names": []
-}
