@@ -1,12 +1,21 @@
-.login-page {
-  --background: #000000;
+// .login-page {
+//   --background: #000000;
+//   display: flex;
+//   flex-direction: column;
+// }
+
+.login-container {
   display: flex;
   flex-direction: column;
+  min-height: 100%; /* 使用 min-height 確保撐滿 */
+  background: #000000;
 }
 
 /* ===== 上半部 Hero ===== */
 .hero-section {
-  height: 45%;
+  height: 40vh; /* 改用 vh (螢幕高度百分比) 會比 % 穩定 */
+  flex-shrink: 0; /* 防止被擠壓 */
+  // height: 45%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -62,11 +71,13 @@
 
 /* ===== 下半部卡片 ===== */
 .card-section {
+  flex-grow: 1; /* 讓剩餘空間填滿 */
+  // padding-bottom: 20px;
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 0 20px;
+  padding: 0 20px 20px 20px;
   margin-top: -40px; /* 卡片浮起來效果 */
 }
 
