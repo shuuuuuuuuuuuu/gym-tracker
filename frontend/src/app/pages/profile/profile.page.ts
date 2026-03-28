@@ -12,6 +12,7 @@ import {
   IonLabel,
   IonList,
 } from '@ionic/angular/standalone';
+import { AlertService } from 'src/app/services/alert';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class ProfilePage implements OnInit {
   userName = '';
   
   constructor(
+    private alert: AlertService, 
     private alertCtrl: AlertController,
     private authService: AuthService,
     private router: Router
@@ -71,12 +73,15 @@ export class ProfilePage implements OnInit {
 
   changePassword(data: any) {
     this.authService.changePassword(data).subscribe({
-      next: () => {
-        alert('密碼修改成功，請重新登入');
+      next: async () => {
+        // 換成 SweetAlert2 的成功視窗，並等待使用者點擊「確定」
+        await this.alert.success('修改成功', '密碼修改成功，請重新登入');
         this.logout();
       },
-      error: err => {
-        alert(err.error?.message || '修改失敗');
+      error: (err) => {
+        // 換成 SweetAlert2 的錯誤視窗
+        const msg = err.error?.message || '修改失敗';
+        this.alert.error('發生錯誤', msg);
       }
     });
   }
@@ -85,12 +90,12 @@ export class ProfilePage implements OnInit {
     this.authService.logout().subscribe({
       next: () => {
         this.authService.clearAuth();
-        this.router.navigate(['/login'], { replaceUrl: true });
+        this.router.navigateByUrl('/login', { replaceUrl: true });
       },
       error: () => {
         // 就算後端失敗，也強制登出
         this.authService.clearAuth();
-        this.router.navigate(['/login'], { replaceUrl: true });
+        this.router.navigateByUrl('/login', { replaceUrl: true });
       }
     });
   }
