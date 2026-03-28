@@ -8,15 +8,18 @@ return [
 
     'allowed_methods' => ['*'],
     
-    'allowed_origins' => [
-        'http://localhost:8100',
-        'http://127.0.0.1:8100',
-        'http://192.168.68.59:8100',
-        'https://gym-tracker-gc7e6hfpc-shuyenkuo1998-7925s-projects.vercel.app', // 前端demo網址
-    ], 
+    // 'allowed_origins' => [
+    //     'http://localhost:8100',
+    //     'http://127.0.0.1:8100',
+    //     'http://192.168.68.59:8100',
+    //     'https://gym-tracker-d5aqa8ore-shuyenkuo1998-7925s-projects.vercel.app/login', // 前端demo網址
+    // ], 
 
-    
-    'allowed_origins_patterns' => [],
+    'allowed_origins' => [],
+
+    'allowed_origins_patterns' => [
+        'https://*.vercel.app',
+    ],
     
     'allowed_headers' => ['*'],
     
