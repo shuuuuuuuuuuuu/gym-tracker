@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ToastController } from '@ionic/angular';
-import { AlertController } from '@ionic/angular';
+// 移除 ToastController 和 AlertController 的導入
 import {
   IonButton,
   IonButtons,
@@ -36,6 +35,7 @@ import {
 import { WorkoutService, Workout } from '../services/workout';
 import { AppHeaderComponent } from '../components/app-header/app-header.component';
 import { Router } from '@angular/router';
+import { AlertService } from 'src/app/services/alert';
 
 @Component({
   selector: 'app-tab1',
@@ -84,13 +84,12 @@ export class Tab1Page implements OnInit {
   totalPages: number = 0;
   pages: number[] = [];
 
-  // 新增表單用物件
   formWorkout: Partial<Workout> = {
     name: '',
     weight: null,
     unit: 'reps', 
     sets: 0,
-    value: 0, // reps 或 sec 共用
+    value: 0,
     workout_date: ''
   };
 
@@ -103,8 +102,7 @@ export class Tab1Page implements OnInit {
   
   constructor(
     private workoutService: WorkoutService,
-    private toastCtrl: ToastController,
-    private alertCtrl: AlertController, 
+    private alert: AlertService, 
     private router: Router
     ) {
     console.log('WorkoutService OK');
@@ -122,32 +120,20 @@ export class Tab1Page implements OnInit {
     
     this.workoutService.getWorkouts(page).subscribe({
       next: (data: any) => {
-        console.log('Workouts raw:', data);
-        
         this.workouts = data.data.data;
         this.currentPage = data.data.current_page;
         this.totalPages = data.data.last_page;
         this.loading = false;
         this.generatePages();
         done?.();
-
       },
       error: (err) => {
         console.error(err);
-        this.error = '無法取得健身紀錄';
+        this.alert.error('載入失敗', '無法取得健身紀錄'); 
         this.loading = false;
         done?.();
       }
     });
-  }
-
-  async presentToast(message: string) {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration: 2000,
-      position: 'top',
-    });
-    await toast.present();
   }
   
   submitWorkout() {
@@ -156,20 +142,105 @@ export class Tab1Page implements OnInit {
       : this.workoutService.createWorkout(this.formWorkout as Workout);
   
     request$.subscribe({
-      next: (res) => {
-        // console.log('新增成功:', res);
+      next: () => {
         this.closeCreateModal();
-        this.fetchWorkouts(this.currentPage); // 更新列表
-        this.presentToast(
-          this.editingWorkoutId ? '更新成功' : '新增成功');
-        // this.resetForm();
+        this.fetchWorkouts(this.currentPage);
+        this.alert.success(this.editingWorkoutId ? '更新成功' : '新增成功');
         this.editingWorkoutId = null;
       },
       error: (err) => {
-        console.error('新增失敗', err);
-        this.presentToast('失敗');
+        console.error('操作失敗', err);
+        this.alert.error('失敗', '請檢查輸入內容是否正確');
       }
     });
+  }
+
+  async confirmDelete(workout: any) {
+    const result = await this.alert.confirm(
+      '確認刪除',
+      `確定要刪除「${workout.name}」嗎？`,
+      '刪除'
+    );
+
+    if (result.isConfirmed) {
+      this.deleteWorkout(workout.id);
+    }
+  }
+  
+  deleteWorkout(id: number) {
+    this.workoutService.deleteWorkout(id).subscribe({
+      next: () => {
+        this.alert.success('已刪除');
+        this.fetchWorkouts(this.currentPage);
+      },
+      error: () => {
+        this.alert.error('錯誤', '刪除失敗');
+      }
+    });
+  }
+
+  openCreateModal() {
+    this.showCreateModal = true;
+    this.editingWorkoutId = null;
+    this.resetForm();
+  }
+
+  closeCreateModal() {
+    this.showCreateModal = false;
+  }
+
+  openEditModal(workout: any) {
+    this.editingWorkoutId = workout.id;
+    this.formWorkout = {
+      name: workout.name,
+      weight: workout.weight,
+      unit: workout.unit,
+      value: workout.value,
+      sets: workout.sets,
+      workout_date: workout.workout_date,
+    };
+    this.showCreateModal = true;
+    this.checkValue();
+    this.checkSets();
+  }
+
+  doRefresh(event: any) {
+    this.fetchWorkouts(this.currentPage, () => {
+      event.target.complete();
+    });
+  }
+
+  checkValue() {
+    this.valueError = !this.formWorkout.value || this.formWorkout.value < 1;
+    this.errorMessage = '數值必須>= 1';
+  }
+  
+  checkSets() {
+    this.setsError = !this.formWorkout.sets || this.formWorkout.sets < 1;
+  }
+
+  generatePages() {
+    const maxVisible = 5;
+    let start = Math.max(this.currentPage - 2, 1);
+    let end = Math.min(start + maxVisible - 1, this.totalPages);
+    if (end - start < maxVisible - 1) {
+      start = Math.max(end - maxVisible + 1, 1);
+    }
+    this.pages = [];
+    for (let i = start; i <= end; i++) {
+      this.pages.push(i);
+    }
+  }
+  
+  goPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.fetchWorkouts(page);
+    this.generatePages();
+  }
+
+  goProfile() {
+    this.router.navigateByUrl('/profile');
   }
 
   resetForm() {
@@ -184,116 +255,4 @@ export class Tab1Page implements OnInit {
     this.checkValue();
     this.checkSets();
   }
-
-  openCreateModal() {
-    this.showCreateModal = true;
-    this.editingWorkoutId = null;
-    this.resetForm();
-  }
-
-  closeCreateModal() {
-    this.showCreateModal = false;
-  }
-
-  async confirmDelete(workout: any) {
-    const alert = await this.alertCtrl.create({
-      header: '確認刪除',
-      message: `確定要刪除「${workout.name}」嗎？`,
-      buttons: [
-        { text: '取消', role: 'cancel' },
-        {
-          text: '刪除',
-          role: 'destructive',
-          handler: () => this.deleteWorkout(workout.id),
-        },
-      ],
-    });
-  
-    await alert.present();
-  }
-  
-  deleteWorkout(id: number) {
-    this.workoutService.deleteWorkout(id).subscribe({
-      next: () => {
-        this.presentToast('已刪除');
-  
-        // 直接重新抓目前頁
-        this.fetchWorkouts(this.currentPage);
-      },
-      error: () => {
-        this.presentToast('刪除失敗');
-      }
-    });
-  
-  }
-
-
-  openEditModal(workout: any) {
-    this.editingWorkoutId = workout.id;
-    
-  
-    this.formWorkout = {
-      name: workout.name,
-      weight: workout.weight,
-      unit: workout.unit,
-      value: workout.value,
-      sets: workout.sets,
-      workout_date: workout.workout_date,
-    };
-  
-    this.showCreateModal = true;
-
-    this.checkValue();
-    this.checkSets();
-  }
-
-  doRefresh(event: any) {
-    console.log('Pull to refresh');
-  
-    this.fetchWorkouts(this.currentPage, () => {
-      event.target.complete(); // 收起 refresher
-    });
-  }
-  
-  // 檢查次數或秒數數值>=1
-  checkValue() {
-    this.valueError = !this.formWorkout.value || this.formWorkout.value < 1;
-    // this.errorMessage = '數值必須大於或等於 1';
-    this.errorMessage = '數值必須>= 1';
-  }
-  
-  // 檢查組數數值>=1
-  checkSets() {
-    this.setsError = !this.formWorkout.sets || this.formWorkout.sets < 1;
-    
-  }
-
-  generatePages() {
-    const maxVisible = 5; // 一次最多顯示 5 個數字
-    let start = Math.max(this.currentPage - 2, 1);
-    let end = Math.min(start + maxVisible - 1, this.totalPages);
-  
-    // 修正尾巴不夠的情況
-    if (end - start < maxVisible - 1) {
-      start = Math.max(end - maxVisible + 1, 1);
-    }
-  
-    this.pages = [];
-    for (let i = start; i <= end; i++) {
-      this.pages.push(i);
-    }
-  }
-  
-  goPage(page: number) {
-    if (page < 1 || page > this.totalPages) return;
-  
-    this.currentPage = page;
-    this.fetchWorkouts(page);
-    this.generatePages();
-  }
-
-  goProfile() {
-    this.router.navigateByUrl('/profile');
-  }
-  
 }
