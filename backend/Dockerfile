@@ -25,6 +25,7 @@ RUN composer install \
     --no-interaction \
     --prefer-dist \
     --optimize-autoloader \
+    --no-scripts
     
 
 RUN chmod -R 777 storage bootstrap/cache
