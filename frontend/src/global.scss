@@ -35,3 +35,19 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* 修正 SweetAlert2 在 Ionic 中的層級與背景問題 */
+.swal2-container {
+    z-index: 999999 !important; /* 確保在所有 Ionic 元件之上 */
+  }
+  
+  /* 避免 SweetAlert2 開啟時 body 出現捲軸閃爍 */
+  body.swal2-shown {
+    overflow: hidden !important;
+  }
+  
+  /* 如果你希望彈窗字體跟 Ionic 一致 */
+  .swal2-popup {
+    font-family: var(--ion-font-family, inherit);
+    border-radius: 12px;
+  }

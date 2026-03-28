@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { ToastController } from '@ionic/angular';
+import { AlertService } from 'src/app/services/alert';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth';
 import {
@@ -9,9 +9,6 @@ import {
   IonContent,
   IonInput,
   IonItem,
-  IonHeader, 
-  IonToolbar, 
-  IonTitle
 } from '@ionic/angular/standalone';
 
 type Mode = 'init' | 'login' | 'register';
@@ -21,8 +18,7 @@ type Mode = 'init' | 'login' | 'register';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton, IonContent, IonInput, IonItem,
-    IonHeader, IonToolbar, IonTitle]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton, IonContent, IonInput, IonItem]
 })
 export class LoginPage {
   mode: Mode = 'init';
@@ -30,7 +26,7 @@ export class LoginPage {
   registerForm!: FormGroup;
 
   constructor(
-    private toastCtrl: ToastController,
+    private alert: AlertService,
     private fb: FormBuilder,
     private router: Router,
     private auth: AuthService
@@ -54,42 +50,34 @@ export class LoginPage {
   switchMode(mode: Mode) {
     this.mode = mode;
   }
-
-  private async showToast(msg: string, color: 'success' | 'danger' | 'warning' = 'success') {
-    const toast = await this.toastCtrl.create({
-      message: msg,
-      duration: 1500,
-      color: color
-    });
-    await toast.present();
-  }
-
   login() {
     if (this.loginForm.invalid) return;
 
     this.auth.login(this.loginForm.value).subscribe({
       next: () => {
-        this.showToast('登入成功', 'success');
+        // 使用 Service 噴彈窗，不等待它結束就轉跳
+        this.alert.success('登入成功'); 
         this.router.navigateByUrl('/tabs/tab1');
       },
       error: (err) => {
         const msg = err.error?.message || '帳號或密碼錯誤';
-        this.showToast(msg, 'danger');
+        this.alert.error('登入失敗', msg); // 顯示詳細錯誤
       }
     });
   }
-
+  
   register() {
     if (this.registerForm.invalid) return;
 
     this.auth.register(this.registerForm.value).subscribe({
-      next: () => {
-        this.showToast('註冊成功，請登入', 'success');
+      next: async () => {
+        // 註冊通常需要確認感，可以 await 等使用者點擊確定再回初始頁
+        await this.alert.success('註冊成功', '請使用新帳號登入');
         this.backToInit();
       },
       error: (err) => {
         const msg = err.error?.message || '註冊失敗';
-        this.showToast(msg, 'danger');
+        this.alert.error('錯誤', msg);
       }
     });
   }
