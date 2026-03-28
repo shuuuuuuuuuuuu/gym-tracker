@@ -10,13 +10,6 @@ export class AuthService {
 
   private apiUrl = environment.apiUrl;
   
-  // // for demo
-  // private apiUrl = window.location.hostname.includes('vercel.app') 
-  // ? 'https://gym-tracker-gc9k.onrender.com/api' 
-  // : 'http://127.0.0.1:8000/api';
-
-  // private apiUrl = 'https://gym-tracker-gc9k.onrender.com/api';
-
   constructor(private http: HttpClient) {}
 
   login(data: { email: string; password: string }) {

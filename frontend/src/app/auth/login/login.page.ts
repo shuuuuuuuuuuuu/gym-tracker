@@ -62,9 +62,9 @@ export class LoginPage {
             duration: 1500,
             color: 'success'
           });
-          toast.present();
+          await toast.present();
     
-          this.router.navigate(['/tabs/tab1']);
+          this.router.navigateByUrl('/tabs/tab1');
         },
         error: async (err: { error: { message: string; }; }) => {
           const msg = err.error?.message || '帳號或密碼錯誤';
