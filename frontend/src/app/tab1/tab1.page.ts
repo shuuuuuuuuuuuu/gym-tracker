@@ -1,9 +1,37 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
+import {
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonContent,
+  IonDatetime,
+  IonFab,
+  IonFabButton,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
+  IonLabel,
+  IonList,
+  IonModal,
+  IonRefresher,
+  IonRefresherContent,
+  IonSelect,
+  IonSelectOption,
+  IonSkeletonText,
+  IonText,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular/standalone';
 
 import { WorkoutService, Workout } from '../services/workout';
 import { AppHeaderComponent } from '../components/app-header/app-header.component';
@@ -14,7 +42,38 @@ import { Router } from '@angular/router';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, AppHeaderComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    AppHeaderComponent,
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonContent,
+    IonDatetime,
+    IonFab,
+    IonFabButton,
+    IonFooter,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonItemOption,
+    IonItemOptions,
+    IonItemSliding,
+    IonLabel,
+    IonList,
+    IonModal,
+    IonRefresher,
+    IonRefresherContent,
+    IonSelect,
+    IonSelectOption,
+    IonSkeletonText,
+    IonText,
+    IonTitle,
+    IonToolbar,
+  ],
 })
 export class Tab1Page implements OnInit {
 

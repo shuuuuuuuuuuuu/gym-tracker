@@ -2,10 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppHeaderComponent } from 'src/app/components/app-header/app-header.component';
-import { IonicModule } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth';
 import { Router } from '@angular/router';
+import {
+  IonContent,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+} from '@ionic/angular/standalone';
 
 
 @Component({
@@ -13,7 +19,7 @@ import { Router } from '@angular/router';
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, AppHeaderComponent]
+  imports: [CommonModule, FormsModule, AppHeaderComponent, IonContent, IonIcon, IonItem, IonLabel, IonList]
 })
 export class ProfilePage implements OnInit {
   userName = '';

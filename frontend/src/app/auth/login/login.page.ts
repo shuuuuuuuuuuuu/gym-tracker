@@ -1,9 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { IonicModule, NavController, ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth';
+import {
+  IonButton,
+  IonContent,
+  IonInput,
+  IonItem,
+} from '@ionic/angular/standalone';
 
 type Mode = 'init' | 'login' | 'register';
 
@@ -12,7 +18,7 @@ type Mode = 'init' | 'login' | 'register';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton, IonContent, IonInput, IonItem]
 })
 export class LoginPage {
   mode: Mode = 'init';
@@ -21,7 +27,6 @@ export class LoginPage {
   registerForm!: FormGroup;
 
   constructor(
-    private navCtrl: NavController,
     private toastCtrl: ToastController,
     private fb: FormBuilder,
     private router: Router,

@@ -1,7 +1,13 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
+import {
+  IonButton,
+  IonContent,
+  IonIcon,
+  IonSegment,
+  IonSegmentButton,
+} from '@ionic/angular/standalone';
 
 import { WorkoutService, Workout, PeriodStats } from '../services/workout';
 import { AppHeaderComponent } from '../components/app-header/app-header.component';
@@ -14,7 +20,17 @@ import { BaseChartDirective, NgChartsModule } from 'ng2-charts';
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, AppHeaderComponent, NgChartsModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    AppHeaderComponent,
+    NgChartsModule,
+    IonButton,
+    IonContent,
+    IonIcon,
+    IonSegment,
+    IonSegmentButton,
+  ]
 })
 export class Tab2Page implements OnInit, AfterViewInit {
 
