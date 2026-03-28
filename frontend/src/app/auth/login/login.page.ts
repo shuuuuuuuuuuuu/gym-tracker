@@ -9,6 +9,9 @@ import {
   IonContent,
   IonInput,
   IonItem,
+  IonHeader, 
+  IonToolbar, 
+  IonTitle
 } from '@ionic/angular/standalone';
 
 type Mode = 'init' | 'login' | 'register';
@@ -18,7 +21,8 @@ type Mode = 'init' | 'login' | 'register';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton, IonContent, IonInput, IonItem]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton, IonContent, IonInput, IonItem,
+    IonHeader, IonToolbar, IonTitle]
 })
 export class LoginPage {
   mode: Mode = 'init';
