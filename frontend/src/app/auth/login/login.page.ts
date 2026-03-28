@@ -51,39 +51,24 @@ export class LoginPage {
     switchMode(mode: Mode) {
       this.mode = mode;
     }
+
+    private async showToast(msg: string, color: string) {
+      const toast = await this.toastCtrl.create({
+        message: msg,
+        duration: 1500,
+        color: color
+      });
+      return await toast.present();
+    }
   
     async login() {
       if (this.loginForm.invalid) return;
     
       this.auth.login(this.loginForm.value).subscribe({
-        next: async (res) => {
-          console.log('進入 Next 區塊');
-          // 先把 toast 註解掉
-          /*
-          const toast = await this.toastCtrl.create({...});
-          await toast.present();
-          */
-          this.router.navigateByUrl('/tabs/tab1').then(s => console.log('跳轉結果:', s));
+        next: () => {
+          this.showToast('登入成功', 'success');
+          this.router.navigateByUrl('/tabs/tab1');
         },
-        // next: async () => {
-        //   const toast = await this.toastCtrl.create({
-        //     message: '登入成功',
-        //     duration: 1500,
-        //     color: 'success'
-        //   });
-        //   await toast.present();
-    
-        //   this.router.navigateByUrl('/tabs/tab1').then(success => {
-        //     if (success) {
-        //       console.log('跳轉成功！');
-        //     } else {
-        //       console.error('跳轉失敗，可能是 Route Guard 攔截或路徑不存在');
-        //     }
-        //   }).catch(err => {
-        //     console.error('導航發生錯誤:', err);
-        //   });
-          
-        // },
         error: async (err: { error: { message: string; }; }) => {
           const msg = err.error?.message || '帳號或密碼錯誤';
           const toast = await this.toastCtrl.create({
