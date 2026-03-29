@@ -22,6 +22,8 @@ class WorkoutFactory extends Factory
         $classification = $service->resolve($name);
 
         return [
+            'user_id' => User::factory(),
+            
             'name' => $name,
 
             'primary_muscle' => $classification['primary'],

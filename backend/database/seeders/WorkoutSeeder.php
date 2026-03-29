@@ -10,16 +10,13 @@ class WorkoutSeeder extends Seeder
 {
     public function run(): void
     {
-        if (Workout::exists()) {
-            return;
-        }
-
-        $user = User::firstOrCreate([
-            'name' => 'Shu'
+        $user = User::factory()->create([
+            'name' => 'Shu',
+            'email' => 'test@test.com'
         ]);
 
-        $user->workouts()->saveMany(
-            Workout::factory(200)->make()
-        );
+        Workout::factory(200)->create([
+            'user_id' => $user->id
+        ]);
     }
 }
