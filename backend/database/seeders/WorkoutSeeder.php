@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Workout;
+use App\Models\User;
 
 class WorkoutSeeder extends Seeder
 {
