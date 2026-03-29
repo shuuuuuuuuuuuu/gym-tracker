@@ -22,12 +22,12 @@ class StoreWorkoutRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'         => 'required|string|max:100',
-            'weight' => 'nullable|numeric|min:0|max:999.99',
-            'unit'         => 'required|in:reps,sec',
-            'value'        => 'required|integer|min:1',
-            'sets'         => 'required|integer|min:1',
-            'workout_date' => 'required|date',
+            'name'         => 'sometimes|string|max:100',
+            'weight'       => 'nullable|numeric|min:1|max:99.99',
+            'unit'         => 'sometimes|in:reps,sec',
+            'value'        => 'sometimes|integer|min:10|max:12',
+            'sets'         => 'sometimes|integer|min:3|max:4',
+            'workout_date' => 'sometimes|date',
         ];
     }
 }

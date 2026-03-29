@@ -23,10 +23,10 @@ class UpdateWorkoutRequest extends FormRequest
     {
         return [
             'name'         => 'sometimes|string|max:100',
-            'weight'       => 'nullable|numeric|min:0|max:999.99',
+            'weight'       => 'nullable|numeric|min:1|max:99.99',
             'unit'         => 'sometimes|in:reps,sec',
-            'value'        => 'sometimes|integer|min:1',
-            'sets'         => 'sometimes|integer|min:1',
+            'value'        => 'sometimes|integer|min:10|max:12',
+            'sets'         => 'sometimes|integer|min:3|max:4',
             'workout_date' => 'sometimes|date',
         ];
     }
