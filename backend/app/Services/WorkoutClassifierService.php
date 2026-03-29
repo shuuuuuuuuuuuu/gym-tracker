@@ -347,4 +347,9 @@ class WorkoutClassifierService
             'group'     => 'unknown',
         ];
     }
+
+    public function getAllExerciseNames(): array
+    {
+        return array_keys($this->rules);
+    }
 }
