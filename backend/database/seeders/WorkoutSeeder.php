@@ -12,11 +12,13 @@ class WorkoutSeeder extends Seeder
         if (Workout::exists()) {
             return;
         }
-    
-        $user = User::where('name', 'Shu')->first();
 
-        Workout::factory(200)->create([
-            'user_id' => $userId,
+        $user = User::firstOrCreate([
+            'name' => 'Shu'
         ]);
+
+        $user->workouts()->saveMany(
+            Workout::factory(200)->make()
+        );
     }
 }
