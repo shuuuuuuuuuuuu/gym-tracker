@@ -10,6 +10,25 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    private function maskEmail($email)
+    {
+        if (!$email) return null;
+        
+        $parts = explode("@", $email);
+        $name = $parts[0];
+        $domain = $parts[1];
+
+        // 取得前兩個字元，後面補上星號
+        $len = strlen($name);
+        if ($len <= 2) {
+            $maskedName = str_repeat('*', $len);
+        } else {
+            $maskedName = substr($name, 0, 2) . str_repeat('*', $len - 2);
+        }
+
+        return $maskedName . "@" . $domain;
+    }
+
     public function register(Request $request)
     {
         $request->validate([
@@ -26,7 +45,12 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => '註冊成功',
-            'user'    => $user,
+            'user'    => [
+                'id'    => $user->id,
+                'name'  => $user->name,
+                // 這裡進行遮罩
+                'email' => $this->maskEmail($user->email),
+            ],
         ], 201);
     }
 
@@ -52,7 +76,7 @@ class AuthController extends Controller
             'user' => [
                 'id'       => $user->id,
                 'name' => $user->name,
-                'email'    => $user->email,
+                'email'    => $this->maskEmail($user->email),
             ],
         ]);
     }
