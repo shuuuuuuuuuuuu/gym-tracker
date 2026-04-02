@@ -10,17 +10,28 @@ use App\Http\Requests\StoreWorkoutRequest;
 use App\Http\Requests\UpdateWorkoutRequest;
 use App\Helpers\ApiResponse;
 use App\Services\WorkoutClassifierService;
+use App\Services\WorkoutService;
 
 
 class WorkoutController extends Controller
 {
+    protected $workoutService;
+
+    /**
+     * 透過依賴注入 (Dependency Injection) 引入 Service
+     */
+    public function __construct(WorkoutService $workoutService)
+    {
+        $this->workoutService = $workoutService;
+    }
+
     /**
      * GET /api/workouts
-     * 取得所有健身紀錄
+     * 分頁取得健身紀錄
      */
     public function index(Request $request)
     {
-        $workouts = Workout::where('user_id', $request->user()->id)
+        $workouts = Workout::forUser()
             ->orderBy('workout_date', 'desc')
             ->paginate(10);
     
@@ -29,14 +40,15 @@ class WorkoutController extends Controller
 
     /**
      * GET 取得所有健身紀錄
+     * 取得所有健身紀錄 (不分頁)
      */
     public function allWorkouts(Request $request)
     {
-        $workouts = Workout::where('user_id', $request->user()->id)
+        $workouts = Workout::forUser()
                             ->orderBy('workout_date', 'asc')
                             ->get();
 
-        return response()->json(['data' => $workouts]);
+        return ApiResponse::success($workouts);
     }
     
     /**
@@ -48,13 +60,8 @@ class WorkoutController extends Controller
     $data = $request->validated();
     $data['user_id'] = $request->user()->id;
 
-    // AI 判定肌群
-    $classifier = app(\App\Services\WorkoutClassifierService::class);
-    $muscle = $classifier->resolve($data['name']);
-
-    $data['primary_muscle']   = $muscle['primary'];
-    $data['secondary_muscle'] = $muscle['secondary'];
-    $data['muscle_group']     = $muscle['group'];
+    // 呼叫 Service 處理肌群自動判定邏輯
+    $data = $this->workoutService->fillMuscleData($data);
 
     $workout = Workout::create($data);
 
@@ -63,13 +70,10 @@ class WorkoutController extends Controller
     
     /**
      * GET /api/workouts/{id}
-     * 取得單一健身紀錄
      */
     public function show(Request $request, $id)
     {
-        $workout = Workout::where('id', $id)
-            ->where('user_id', $request->user()->id)
-            ->first();
+        $workout = $this->workoutService->findUserWorkout($id);
     
         if (!$workout) {
             return ApiResponse::error('Workout not found', null, 404);
@@ -83,41 +87,31 @@ class WorkoutController extends Controller
      * 更新健身紀錄
      */
     public function update(UpdateWorkoutRequest $request, $id)
-{
-    $workout = Workout::where('id', $id)
-        ->where('user_id', $request->user()->id)
-        ->first();
+    {
+        $workout = $this->workoutService->findUserWorkout($id);
+    
+        if (!$workout) {
+            return ApiResponse::error('Workout not found', null, 404);
+        }
 
-    if (!$workout) {
-        return ApiResponse::error('Workout not found', null, 404);
+        $data = $request->validated();
+
+        if (isset($data['name'])) {
+            $data = $this->workoutService->fillMuscleData($data);
+        }
+
+        $workout->update($data);
+
+        return ApiResponse::success($workout, 'Workout updated successfully');
     }
-
-    $data = $request->validated();
-
-    if (isset($data['name'])) {
-        $classifier = app(\App\Services\WorkoutClassifierService::class);
-        $muscle = $classifier->resolve($data['name']);
-
-        $data['primary_muscle']   = $muscle['primary'];
-        $data['secondary_muscle'] = $muscle['secondary'];
-        $data['muscle_group']     = $muscle['group'];
-    }
-
-    $workout->update($data);
-
-    return ApiResponse::success($workout, 'Workout updated successfully');
-}
 
 
     /**
      * DELETE /api/workouts/{id}
-     * 刪除健身紀錄
      */
     public function destroy(Request $request, $id)
     {
-        $workout = Workout::where('id', $id)
-            ->where('user_id', $request->user()->id)
-            ->first();
+        $workout = $this->workoutService->findUserWorkout($id);
     
         if (!$workout) {
             return ApiResponse::error('Workout not found', null, 404);
@@ -134,11 +128,10 @@ class WorkoutController extends Controller
     /**
      * GET /api/workouts/statistics
      * 取得指定時間範圍內的主肌群統計
-     * query: ?range=day|week|month|year&start=YYYY-MM-DD&end=YYYY-MM-DD
+     * 參數: range (day|week|month|year), start, end
      */
     public function statistics(Request $request)
     {
-        $user = $request->user();
         $range = $request->query('range', 'day');
         $start = $request->query('start');
         $end = $request->query('end');
@@ -147,44 +140,13 @@ class WorkoutController extends Controller
             return ApiResponse::error('缺少 start 或 end 參數', null, 400);
         }
 
-        // 取該時間範圍內該用戶的健身紀錄
-        $workouts = Workout::where('user_id', $user->id)
-            ->whereBetween('workout_date', [$start, $end])
-            ->get();
-
-        // 根據 primary_muscle 分組統計訓練量
-        $muscleStats = [];
-
-        foreach ($workouts as $w) {
-            $muscle = $w->primary_muscle ?? '其他';
-
-            // 訓練量計算
-            if ($w->unit === 'reps' && $w->weight !== null) {
-                $volume = $w->weight * $w->value * $w->sets;
-            } elseif ($w->unit === 'secs') {
-                $volume = $w->value * $w->sets;
-            } else {
-                $volume = 0;
-            }
-
-            if (!isset($muscleStats[$muscle])) {
-                $muscleStats[$muscle] = 0;
-            }
-
-            $muscleStats[$muscle] += $volume;
-        }
-
-        // 轉陣列給前端
-        $result = [];
-        foreach ($muscleStats as $muscle => $volume) {
-            $result[] = [
-                'muscle' => $muscle,
-                'volume' => round($volume, 1)
-            ];
-        }
-
-        // 可依 volume 排序，方便 Chart 顯示
-        usort($result, fn($a, $b) => $b['volume'] <=> $a['volume']);
+        // 直接跟 Service 要統計後的結果
+        $result = $this->workoutService->getMuscleStats(
+            $request->user()->id, 
+            $start, 
+            $end,
+            $range
+        );
 
         return ApiResponse::success($result);
     }
@@ -195,11 +157,8 @@ class WorkoutController extends Controller
      */
     public function restore(Request $request, $id)
     {
-        $workout = Workout::withTrashed()
-            ->where('id', $id)
-            ->where('user_id', $request->user()->id)
-            ->first();
-    
+        $workout = $this->workoutService->findUserWorkout($id, true);
+        
         if (!$workout) {
             return ApiResponse::error('Workout not found', null, 404);
         }
