@@ -17,9 +17,6 @@ class WorkoutController extends Controller
 {
     protected $workoutService;
 
-    /**
-     * 透過依賴注入 (Dependency Injection) 引入 Service
-     */
     public function __construct(WorkoutService $workoutService)
     {
         $this->workoutService = $workoutService;
@@ -128,7 +125,6 @@ class WorkoutController extends Controller
     /**
      * GET /api/workouts/statistics
      * 取得指定時間範圍內的主肌群統計
-     * 參數: range (day|week|month|year), start, end
      */
     public function statistics(Request $request)
     {
@@ -140,7 +136,6 @@ class WorkoutController extends Controller
             return ApiResponse::error('缺少 start 或 end 參數', null, 400);
         }
 
-        // 直接跟 Service 要統計後的結果
         $result = $this->workoutService->getMuscleStats(
             $request->user()->id, 
             $start, 

@@ -48,7 +48,7 @@ class AuthController extends Controller
             'user'    => [
                 'id'    => $user->id,
                 'name'  => $user->name,
-                // 這裡進行遮罩
+                // 遮罩
                 'email' => $this->maskEmail($user->email),
             ],
         ], 201);
@@ -107,7 +107,6 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // 刪除目前使用的 token
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([

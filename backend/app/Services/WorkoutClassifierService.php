@@ -218,7 +218,7 @@ class WorkoutClassifierService
     ];
 
     /**
-     * 關鍵字 → 肌群 對應（加權判斷用）
+     * 肌群對應
      */
     protected array $keywordMap = [
         'press'     => ['primary' => 'chest', 'group' => 'upper'],
@@ -239,7 +239,7 @@ class WorkoutClassifierService
     protected array $cache = [];
 
     /**
-     * 封裝總流程
+     * 封裝
      */
     public function resolve(string $name): array
     {
@@ -257,7 +257,7 @@ class WorkoutClassifierService
     }
 
     /**
-     * 1️⃣ 精準規則匹配
+     * 依規則匹配
      */
     protected function classifyByRule(string $name): ?array
     {
@@ -273,7 +273,7 @@ class WorkoutClassifierService
     }
 
     /**
-     * 2️⃣ 關鍵字加權判斷
+     * keyword判斷
      */
     protected function classifyByKeywordScore(string $name): ?array
     {
@@ -302,7 +302,7 @@ class WorkoutClassifierService
     }
 
     /**
-     * 3️⃣ 字串相似度比對（模糊最終判斷）
+     * 字串相似度
      */
     protected function classifyBySimilarity(string $name): ?array
     {
@@ -319,7 +319,6 @@ class WorkoutClassifierService
             }
         }
 
-        // 相似度超過 70% 才接受
         if ($bestScore >= 70) {
             return $bestMatch;
         }

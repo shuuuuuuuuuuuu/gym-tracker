@@ -36,7 +36,7 @@ class Workout extends Model
 
     public function scopeForUser($query, $userId = null)
     {
-        // 如果沒傳 userId，自動抓目前登入者，增強靈活性
+        // 如果沒傳 userId，自動抓目前登入者
         $userId = $userId ?: auth()->id();
         return $query->where('user_id', $userId);
     }

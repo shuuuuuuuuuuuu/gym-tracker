@@ -15,10 +15,8 @@ class WorkoutFactory extends Factory
     {
         $service = app(WorkoutClassifierService::class);
 
-        // 從 rules 隨機挑一個 name
         $name = fake()->randomElement($service->getAllExerciseNames());
 
-        // 用 service 判斷分類
         $classification = $service->resolve($name);
 
         return [
@@ -29,12 +27,7 @@ class WorkoutFactory extends Factory
             'primary_muscle' => $classification['primary'],
             'secondary_muscle' => $classification['secondary'],
             'muscle_group' => $classification['group'],
-
-            // 約 20% 機率為 null，其餘為 0~100 的小數兩位
-            'weight' => $this->faker->boolean(20)
-                ? null
-                : $this->faker->randomFloat(2, 0, 100),
-
+            'weight' => $this->faker->randomFloat(2, 0, 100),
             'unit' => $this->faker->randomElement(['reps', 'sec']),
             'value' => $this->faker->numberBetween(8, 12),
             'sets' => $this->faker->numberBetween(1, 4),
