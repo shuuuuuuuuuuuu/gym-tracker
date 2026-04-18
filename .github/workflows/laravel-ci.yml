@@ -16,7 +16,6 @@ jobs:
     env:
       DB_CONNECTION: sqlite
       DB_DATABASE: ":memory:"
-      APP_KEY: base64:base64:wz01/G+zW4fQ4q2p6tX3LhRz6w9v1u4k5j8h7g6f5d=
 
     steps:
       - uses: actions/checkout@v3
@@ -27,21 +26,20 @@ jobs:
           php-version: "8.4"
           extensions: mbstring, xml, bcmath, sqlite3
 
-      - name: Debug and Copy .env
+      - name: Copy .env
         run: |
-          ls -la
           if [ -f .env.example ]; then
             cp .env.example .env
           else
-            echo ".env.example not found, creating empty .env"
             touch .env
           fi
+          echo "APP_KEY=" >> .env
 
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress
 
       - name: Generate Key
-        run: php artisan key:generate
+        run: php artisan key:generate --force
 
       - name: Run Tests
         run: php artisan test
