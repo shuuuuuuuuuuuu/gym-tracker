@@ -26,8 +26,15 @@ jobs:
           php-version: "8.4"
           extensions: mbstring, xml, bcmath, sqlite3
 
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Debug and Copy .env
+        run: |
+          ls -la
+          if [ -f .env.example ]; then
+            cp .env.example .env
+          else
+            echo ".env.example not found, creating empty .env"
+            touch .env
+          fi
 
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress
