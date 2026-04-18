@@ -16,6 +16,7 @@ jobs:
     env:
       DB_CONNECTION: sqlite
       DB_DATABASE: ":memory:"
+      APP_KEY: base64:base64:wz01/G+zW4fQ4q2p6tX3LhRz6w9v1u4k5j8h7g6f5d=
 
     steps:
       - uses: actions/checkout@v3
