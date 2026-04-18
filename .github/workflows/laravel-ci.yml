@@ -38,6 +38,13 @@ jobs:
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress
 
+      - name: Create Storage Directories
+        run: |
+          mkdir -p storage/framework/cache
+          mkdir -p storage/framework/views
+          mkdir -p storage/framework/sessions
+          chmod -R 775 storage
+
       - name: Generate Key
         run: php artisan key:generate --force
 
