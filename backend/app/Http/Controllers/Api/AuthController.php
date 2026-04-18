@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
+use OpenApi\Attributes as OA;
+
 class AuthController extends Controller
 {
     private function maskEmail($email)
@@ -29,6 +31,25 @@ class AuthController extends Controller
         return $maskedName . "@" . $domain;
     }
 
+    #[OA\Post(
+        path: '/api/register',
+        summary: '註冊新用戶',
+        tags: ['Auth'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "name", type: "string", example: "John Doe"),
+                    new OA\Property(property: "email", type: "string", example: "user@example.com"),
+                    new OA\Property(property: "password", type: "string", example: "password123")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: '註冊成功', content: new OA\JsonContent(ref: "#/components/schemas/ApiResponse")),
+            new OA\Response(response: 422, description: '驗證失敗')
+        ]
+    )]
     public function register(Request $request)
     {
         $request->validate([
@@ -54,6 +75,33 @@ class AuthController extends Controller
         ], 201);
     }
 
+    #[OA\Post(
+        path: '/api/login',
+        summary: '使用者登入',
+        tags: ['Auth'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "email", type: "string", example: "user@example.com"),
+                    new OA\Property(property: "password", type: "string", example: "password123")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: '登入成功',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "token", type: "string"),
+                        new OA\Property(property: "user", type: "object")
+                    ]
+                )
+            ),
+            new OA\Response(response: 422, description: '驗證失敗')
+        ]
+    )]
     public function login(Request $request)
     {
         $request->validate([
@@ -81,6 +129,26 @@ class AuthController extends Controller
         ]);
     }
 
+    #[OA\Post(
+        path: '/api/change-password',
+        summary: '修改密碼',
+        tags: ['Auth'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "current_password", type: "string", example: "password123"),
+                    new OA\Property(property: "password", type: "string", example: "password123"),
+                    new OA\Property(property: "password_confirmation", type: "string", example: "password123")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: '密碼修改成功', content: new OA\JsonContent(ref: "#/components/schemas/ApiResponse")),
+            new OA\Response(response: 422, description: '驗證失敗')
+        ]
+    )]
     public function changePassword(Request $request)
     {
         $request->validate([
@@ -105,6 +173,15 @@ class AuthController extends Controller
         ]);
     }
 
+    #[OA\Post(
+        path: '/api/logout',
+        summary: '登出',
+        tags: ['Auth'],
+        security: [['bearerAuth' => []]],
+        responses: [
+            new OA\Response(response: 200, description: '已登出', content: new OA\JsonContent(ref: "#/components/schemas/ApiResponse")),
+        ]
+    )]
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

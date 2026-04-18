@@ -6,6 +6,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use OpenApi\Attributes as OA;
+
+#[OA\Schema(
+    schema: "Workout",
+    properties: [
+        new OA\Property(property: "id", type: "integer"),
+        new OA\Property(property: "name", type: "string"),
+        new OA\Property(property: "weight", type: "number"),
+        new OA\Property(property: "unit", type: "string"),
+        new OA\Property(property: "value", type: "integer"),
+        new OA\Property(property: "sets", type: "integer"),
+        new OA\Property(property: "workout_date", type: "string", format: "date"),
+        new OA\Property(property: "primary_muscle", type: "string"),
+        new OA\Property(property: "secondary_muscle", type: "string"),
+        new OA\Property(property: "muscle_group", type: "string"),
+        new OA\Property(property: "created_at", type: "string", format: "date-time"),
+        new OA\Property(property: "updated_at", type: "string", format: "date-time"),
+        new OA\Property(property: "deleted_at", type: "string", format: "date-time"),
+    ]
+)]
 class Workout extends Model
 {
     use HasFactory;
