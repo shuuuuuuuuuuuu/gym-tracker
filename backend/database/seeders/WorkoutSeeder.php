@@ -10,14 +10,15 @@ class WorkoutSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::factory()->create([
-            'name' => 'Shu',
-            'email' => 'test@test.com'
-        ]);
+        $user = User::updateOrCreate(
+            ['email' => 'test@test.com'], 
+            [
+                'name' => 'Shu',
+                'password' => bcrypt('123456'), 
+            ]
+        );
 
-        // \App\Models\Workout::truncate();
-
-        Workout::factory(1000)->create([
+        Workout::factory(500)->create([
             'user_id' => $user->id
         ]);
     }
