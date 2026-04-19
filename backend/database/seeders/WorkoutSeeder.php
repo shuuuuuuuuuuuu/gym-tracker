@@ -15,6 +15,8 @@ class WorkoutSeeder extends Seeder
             'email' => 'test@test.com'
         ]);
 
+        \App\Models\Workout::truncate();
+
         Workout::factory(1000)->create([
             'user_id' => $user->id
         ]);
