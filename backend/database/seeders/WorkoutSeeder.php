@@ -18,7 +18,7 @@ class WorkoutSeeder extends Seeder
             ]
         );
 
-        Workout::factory(500)->create([
+        Workout::factory(1000)->create([
             'user_id' => $user->id
         ]);
     }
