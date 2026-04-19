@@ -28,20 +28,20 @@ class WorkoutService
         return $data;
     }
 
-    /**
-     * 計算訓練量
-     */
-    public function calculateVolume(Workout $workout): float
-    {
-        if ($workout->unit === 'reps' && $workout->weight !== null) {
-            return (float) ($workout->weight * $workout->value * $workout->sets);
-        } 
-        if ($workout->unit === 'sec' || $workout->unit === 'secs') {
-            return (float) ($workout->value * $workout->sets);
-        }
+    // /**
+    //  * 計算訓練量
+    //  */
+    // public function calculateVolume(Workout $workout): float
+    // {
+    //     if ($workout->unit === 'reps' && $workout->weight !== null) {
+    //         return (float) ($workout->weight * $workout->value * $workout->sets);
+    //     } 
+    //     if ($workout->unit === 'sec' || $workout->unit === 'secs') {
+    //         return (float) ($workout->value * $workout->sets);
+    //     }
 
-        return 0;
-    }
+    //     return 0;
+    // }
 
     /**
      * 找特定使用者的紀錄
@@ -62,19 +62,18 @@ class WorkoutService
      */
     public function getMuscleStats($userId, $start, $end, $range = 'day')
     {
-        $workouts = Workout::where('user_id', $userId)
+        return Workout::where('user_id', $userId)
             ->whereBetween('workout_date', [$start, $end])
+            ->select('primary_muscle', 
+                DB::raw('SUM(
+                    CASE 
+                        WHEN unit = "reps" THEN (weight * value * sets)
+                        WHEN unit IN ("sec", "secs") THEN (value * sets)
+                        ELSE 0 
+                    END
+                ) as total_volume')
+            )
+            ->groupBy('primary_muscle')
             ->get();
-
-        return $workouts->groupBy('primary_muscle')
-            ->map(function ($items, $muscle) {
-                return [
-                    'muscle' => $muscle ?: '其他',
-                    'volume' => round($items->sum(fn($w) => $this->calculateVolume($w)), 1)
-                ];
-            })
-            ->values()
-            ->sortByDesc('volume')
-            ->toArray();
     }
 }
