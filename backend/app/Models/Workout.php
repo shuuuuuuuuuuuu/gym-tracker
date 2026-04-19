@@ -60,4 +60,22 @@ class Workout extends Model
         $userId = $userId ?: auth()->id();
         return $query->where('user_id', $userId);
     }
+
+
+    /**
+     * 計算訓練量
+     */
+    protected $appends = ['volume'];
+
+    public function getVolumeAttribute(): float
+    {
+        if ($this->unit === 'reps' && $this->weight !== null) {
+            return (float) ($this->weight * $this->value * $this->sets);
+        } 
+        if ($this->unit === 'sec' || $this->unit === 'secs') {
+            return (float) ($this->value * $this->sets);
+        }
+
+        return 0;
+    }
 }
