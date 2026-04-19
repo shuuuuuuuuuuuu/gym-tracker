@@ -32,7 +32,7 @@ class WorkoutFactory extends Factory
             'value' => $this->faker->numberBetween(8, 12),
             'sets' => $this->faker->numberBetween(1, 4),
             'workout_date' => $this->faker
-                ->dateTimeBetween('2026-01-01', '2026-03-31')
+                ->dateTimeBetween('2025-01-01', 'now')
                 ->format('Y-m-d'),
         ];
     }
