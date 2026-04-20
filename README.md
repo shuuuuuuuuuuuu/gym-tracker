@@ -40,7 +40,7 @@
 
 ```bash
 # Clone the repository
-git clone [https://github.com/shuuuuuuuuuuuu/gym-tracker.git](https://github.com/shuuuuuuuuuuuu/gym-tracker.git)
+git clone https://github.com/shuuuuuuuuuuuu/gym-tracker.git
 
 # Install dependencies
 composer install
