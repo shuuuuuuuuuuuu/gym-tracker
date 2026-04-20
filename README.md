@@ -54,15 +54,18 @@ php artisan migrate --seed
 
 ## Testing
 本專案高度重視軟體品質，已建立完整的測試覆蓋：
-* Feature Tests: 驗證 API 端點的請求與回應邏輯 (Controller)。
-* Unit Tests: 確保 WorkoutClassifierService 分類演算法的精確性。
 
-### 執行測試：
+* **Feature Tests**: 驗證 API 端點的請求與回應邏輯 (Controller)。
+* **Unit Tests**: 確保 `WorkoutClassifierService` 分類演算法的精確性。
+
+### 如何執行測試
+在終端機輸入以下指令，即可執行專案內的所有測試：
+
 ```bash
 php artisan test
-````
 
 ## Roadmap
 
 -   增加使用者訓練成效趨勢圖分析
 -   優化相似度演算法
+````
