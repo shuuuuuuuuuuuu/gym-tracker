@@ -28,21 +28,6 @@ class WorkoutService
         return $data;
     }
 
-    // /**
-    //  * 計算訓練量
-    //  */
-    // public function calculateVolume(Workout $workout): float
-    // {
-    //     if ($workout->unit === 'reps' && $workout->weight !== null) {
-    //         return (float) ($workout->weight * $workout->value * $workout->sets);
-    //     } 
-    //     if ($workout->unit === 'sec' || $workout->unit === 'secs') {
-    //         return (float) ($workout->value * $workout->sets);
-    //     }
-
-    //     return 0;
-    // }
-
     /**
      * 找特定使用者的紀錄
      */
